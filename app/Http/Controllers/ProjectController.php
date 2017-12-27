@@ -1,0 +1,197 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Project;
+use App\User;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Validator;
+use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
+class ProjectController extends Controller
+{
+	public function __construct()
+	{
+		$this->middleware('auth');
+	}
+
+	public function index(Request $request)
+	{
+		$request->user()->authorizeRoles(['admin', 'user']);
+
+		$result = array();
+        // get all the project
+        $projects = Project::with('users')->get();
+        $users = $this->getAllUsers();
+
+		$result['projects'] = $projects;
+		$result['users'] = $users;
+
+        return response()->json($result);
+       // load the view and pass the projects
+//         return view('project.index')
+//             ->with('project', $projects);
+	}
+
+	private function getAllUsers() {
+		$user = Auth::user();
+
+		$owner_user_id = $user->owner_user_id;
+
+    	// owner user is either logged_in user, if his owner_user_id is NULL...
+    	/// or owner_user_id ....
+		if ($owner_user_id == null)
+			$owner_user_id = $user->id;
+
+        //
+        // get all the users belongs to this team (i.e. create by this owner admin user)
+        $users = User::where('owner_user_id', $owner_user_id)->orWhere('id', $owner_user_id)->get();
+	
+		return $users;
+	}
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+		// load the create form (app/views/project/create.blade.php)
+// 		return view('project.create');
+        //
+    }
+
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @return Response
+	 */
+	public function store(Request $request)
+	{
+		// validate
+		// read more on validation at http://laravel.com/docs/validation
+		$rules = array(
+			'name'       => 'required',
+		);
+		$validatedData = $request->validate($rules);
+
+		$project = new Project;
+		$project->name       = Input::get('name');
+		$project->description      = Input::get('description');
+		$project->save();
+
+		// redirect
+        return response()->json('Successfully created a Project');
+	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		// get the project
+// 		$project = Project::find($id);
+// 
+// 		// show the view and pass the nerd to it
+// 		return view('project.show')
+// 			->with('project', $project);
+	}
+
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function edit($id)
+	{
+		// get the project
+		$project = Project::find($id);
+
+        return response()->json($project);
+
+		// show the edit form and pass the nerd
+// 		return view('project.edit')
+// 			->with('project', $project);
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function update(Request $request, $id)
+	{
+		// validate
+		// read more on validation at http://laravel.com/docs/validation
+		$rules = array(
+			'name'       => 'required',
+		);
+		$validatedData = $request->validate($rules);
+
+		// store
+		$project = Project::find($id);
+		$project->name = Input::get('name');
+		$project->description = Input::get('description');
+
+		$project->save();
+
+		// redirect
+// 		Session::flash('message', 'Successfully updated Project!');
+// 		return Redirect::to('project');
+        return response()->json('Successfully Updated');
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		// delete
+		Project::destroy($id);
+
+		// redirect
+// 		Session::flash('message', 'Successfully deleted the project!');
+// 		return Redirect::to('project');
+      return response()->json('Successfully Deleted');
+	}
+
+	/*********************** CUSTOM Methods ****************************/
+
+	/**
+	 * This method associates projects with users (many-to-many).
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function updateusers(Request $request, $id)
+	{
+		$user_idstr = $request->input('users');
+		$user_ids = explode(",", $user_idstr);
+		
+		if (count($user_ids) > 0) {
+			// get the project
+			$project = Project::find($id);
+
+			Log::info('Update Project users : '.json_encode($user_ids));
+			// detach earlier users from this project....and add all as new ....
+			$project->users()->sync($user_ids);
+			
+			$projects = Project::find($id)->with('users')->get();
+		}
+		
+        return response()->json($project);
+	}
+}

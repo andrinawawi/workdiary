@@ -1,0 +1,8 @@
+/* margin for table buttons */
+table .btn {
+	margin-right: 5px;
+}
+
+.modal-header {
+	font-weight: bold;
+}

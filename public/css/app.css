@@ -5,7 +5,20 @@ table .btn {
 
 .modal-header {
 	font-weight: bold;
-}@charset "UTF-8";
+}
+
+.todo {
+	color: red;
+}
+
+.done {
+	color: #259325;
+}
+
+.working {
+	color: #0805f6;
+}
+@charset "UTF-8";
 
 /*!
  * Bootstrap v3.3.7 (http://getbootstrap.com)

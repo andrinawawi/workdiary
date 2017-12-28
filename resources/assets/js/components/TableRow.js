@@ -40,7 +40,7 @@ class TableRow extends Component {
           </td>
           <td>
 			<input onClick={this.handleShowTeam} type="button" value="Team" className="btn btn-info"/>
-            <Link to={"tasks"} className="btn btn-primary">Tasks</Link>
+            <Link to={"tasks/project/"+this.props.obj.id} className="btn btn-primary">Tasks</Link>
             <Link to={"edit-project/"+this.props.obj.id} className="btn btn-primary">Edit</Link>
 			<input onClick={this.handleShowDelete} type="button" value="Delete" className="btn btn-danger"/>
           </td>

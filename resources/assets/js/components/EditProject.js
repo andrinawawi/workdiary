@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import { Link } from 'react-router';
+import { Link, browserHistory } from 'react-router';
+import { ButtonToolbar, Button } from 'react-bootstrap';
 
 class EditProject extends Component {
   constructor(props) {
@@ -31,6 +32,12 @@ class EditProject extends Component {
     })
   }
 
+  // go to back....
+  handleCancel(e) {
+      // to react tasks url
+      browserHistory.push('/projects');  	
+  }
+
   handleSubmit(event) {
     event.preventDefault();
     const project = {
@@ -48,11 +55,8 @@ class EditProject extends Component {
         <h1>Edit Project</h1>
         <div className="row">
           <div className="col-md-10"></div>
-          <div className="col-md-2">
-            <Link to="/projects" className="btn btn-success">Back</Link>
-          </div>
         </div>
-        <form onSubmit={this.handleSubmit}>
+        <form>
             <div className="form-group">
                 <label>Name</label>
                 <input type="text"
@@ -69,7 +73,10 @@ class EditProject extends Component {
             </div>
 
             <div className="form-group">
-                <button className="btn btn-primary">Update</button>
+				<ButtonToolbar>
+				  <button onClick={this.handleSubmit} className="btn btn-primary">Update</button>
+				  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+				</ButtonToolbar>
             </div>
         </form>
     </div>

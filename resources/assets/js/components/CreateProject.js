@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
+import { ButtonToolbar, Button } from 'react-bootstrap';
 
 class CreateProject extends Component {
   constructor(props){
@@ -32,11 +33,17 @@ class CreateProject extends Component {
     });
   }
 
+  // go to back....
+  handleCancel(e) {
+      // to react tasks url
+      browserHistory.push('/projects');  	
+  }
+
     render() {
       return (
       <div>
         <h1>Create A Project</h1>
-        <form onSubmit={this.handleSubmit}>
+        <form>
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
@@ -54,7 +61,10 @@ class CreateProject extends Component {
               </div>
             </div><br />
             <div className="form-group">
-              <button className="btn btn-primary">Add Project</button>
+				<ButtonToolbar>
+				  <button onClick={this.handleSubmit} className="btn btn-primary">Add Project</button>
+				  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+				</ButtonToolbar>
             </div>
         </form>
   </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Project;
 use App\User;
+use App\Task;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
@@ -25,8 +26,11 @@ class ProjectController extends Controller
 		$request->user()->authorizeRoles(['admin', 'user']);
 
 		$result = array();
-        // get all the project
-        $projects = Project::with('users')->get();
+        // get all the project for this Team
+        
+		$owner_user_id = $this->getOwnerUserId();
+
+        $projects = Project::where('owner_user_id', $owner_user_id)->with('users')->get();
         $users = $this->getAllUsers();
 
 		$result['projects'] = $projects;
@@ -38,22 +42,6 @@ class ProjectController extends Controller
 //             ->with('project', $projects);
 	}
 
-	private function getAllUsers() {
-		$user = Auth::user();
-
-		$owner_user_id = $user->owner_user_id;
-
-    	// owner user is either logged_in user, if his owner_user_id is NULL...
-    	/// or owner_user_id ....
-		if ($owner_user_id == null)
-			$owner_user_id = $user->id;
-
-        //
-        // get all the users belongs to this team (i.e. create by this owner admin user)
-        $users = User::where('owner_user_id', $owner_user_id)->orWhere('id', $owner_user_id)->get();
-	
-		return $users;
-	}
     /**
      * Show the form for creating a new resource.
      *
@@ -79,10 +67,12 @@ class ProjectController extends Controller
 			'name'       => 'required',
 		);
 		$validatedData = $request->validate($rules);
+		$owner_user_id = $this->getOwnerUserId();
 
 		$project = new Project;
 		$project->name       = Input::get('name');
 		$project->description      = Input::get('description');
+		$project->owner_user_id = $owner_user_id;
 		$project->save();
 
 		// redirect
@@ -157,15 +147,16 @@ class ProjectController extends Controller
 	 * @param  int  $id
 	 * @return Response
 	 */
-	public function destroy($id)
+	public function destroy(Request $request, $id)
 	{
+		$request->user()->authorizeRoles('admin');
 		// delete
 		Project::destroy($id);
 
 		// redirect
 // 		Session::flash('message', 'Successfully deleted the project!');
 // 		return Redirect::to('project');
-      return response()->json('Successfully Deleted');
+      	return response()->json('Successfully Deleted');
 	}
 
 	/*********************** CUSTOM Methods ****************************/
@@ -194,4 +185,24 @@ class ProjectController extends Controller
 		
         return response()->json($project);
 	}
+	
+    public function tasks(Request $request, $projectId)
+    {
+		$owner_user_id = $this->getOwnerUserId();
+
+        // get all the tasks belongs to this given project Id
+        $tasks = Task::with(['user', 'project'])->where('project_id', $projectId)->get();
+
+		// we need to return all users, project since they will be used
+		// in AddTask page , ToDO: remove this later on when use Redux ......
+        $projects = Project::where('owner_user_id', $owner_user_id)->get();
+        $users = $this->getAllUsers();
+
+		$result['tasks'] = $tasks;
+		$result['projects'] = $projects;
+		$result['users'] = $users;
+
+        return response()->json($result);
+    }
+	
 }

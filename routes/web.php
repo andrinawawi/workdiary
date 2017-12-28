@@ -31,4 +31,11 @@ Route::resource('user', 'UserController');
 
 Route::resource('items', 'ItemController');
 
+Route::resource('task', 'TaskController');
+
 Route::post('/project/{project}/update_users', 'ProjectController@updateusers')->name('home');
+
+// custom controller to fetch tasks related to specific user or project ....
+Route::get('/project/{project}/tasks', 'ProjectController@tasks')->name('home');
+
+Route::get('/user/{user}/tasks', 'UserController@tasks')->name('home');

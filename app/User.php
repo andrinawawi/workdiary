@@ -15,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'owner_user_id'
     ];
 
     /**
@@ -32,6 +32,11 @@ class User extends Authenticatable
 	  return $this->belongsToMany(Role::class);
 	}
 	
+	public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+    
 	public function projects()
 	{
 	  return $this->belongsToMany(Project::class)->withTimestamps();

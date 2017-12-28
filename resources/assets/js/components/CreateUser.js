@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
+import { ButtonToolbar, Button } from 'react-bootstrap';
 
 class CreateUser extends Component {
   constructor(props){
@@ -31,12 +32,17 @@ class CreateUser extends Component {
       browserHistory.push('/users');
     });
   }
+  // go to back....
+  handleCancel(e) {
+      // to react tasks url
+      browserHistory.push('/users');  	
+  }
 
     render() {
       return (
       <div>
         <h1>Create A User</h1>
-        <form onSubmit={this.handleSubmit}>
+        <form>
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
@@ -54,10 +60,13 @@ class CreateUser extends Component {
               </div>
             </div><br />
             <div className="form-group">
-              <button className="btn btn-primary">Add User</button>
+				<ButtonToolbar>
+				  <button onClick={this.handleSubmit} className="btn btn-primary">Add User</button>
+				  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+				</ButtonToolbar>
             </div>
         </form>
-  </div>
+		</div>
       )
     }
 }

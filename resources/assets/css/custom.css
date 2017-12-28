@@ -6,3 +6,15 @@ table .btn {
 .modal-header {
 	font-weight: bold;
 }
+
+.todo {
+	color: red;
+}
+
+.done {
+	color: #259325;
+}
+
+.working {
+	color: #0805f6;
+}

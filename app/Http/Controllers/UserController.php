@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\User;
 use App\Role;
+use App\Task;
+use App\Project;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Validator;
@@ -20,18 +22,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-		$user = Auth::user();
-				
-        Log::info('Showing user profile loggedIn: '.json_encode($user));
+		$owner_user_id = $this->getOwnerUserId();
 
-		$owner_user_id = $user->owner_user_id;
-		
-    	// owner user is either logged_in user, if his owner_user_id is NULL...
-    	/// or owner_user_id ....
-		if ($owner_user_id == null)
-			$owner_user_id = $user->id;
-
-        //
         // get all the users belongs to this team (i.e. create by this owner admin user)
         $users = User::where('owner_user_id', $owner_user_id)->orWhere('id', $owner_user_id)->get();
 
@@ -64,14 +56,14 @@ class UserController extends Controller
 		);
 		$validatedData = $request->validate($rules);
 
-// 		$project = new User;
-// 		$project->name       = Input::get('name');
-// 		$project->email      = Input::get('email');
-// 		$project->save();
+		// add owner_user id to logged In admin....
+		$user = Auth::user();
+		$owner_user_id = $user->id;
 
         $user = User::create([
             'name' => Input::get('name'),
             'email' => Input::get('email'),
+            'owner_user_id' => $owner_user_id,
             // TODO : default password of 123456 should be handled better
             'password' => bcrypt('123456'),
         ]);
@@ -79,11 +71,8 @@ class UserController extends Controller
 		// be default create all team members to 'user' role.....
 		$user->roles()->attach(Role::where('name', 'user')->first());
         
-        return $user;
-
 		// redirect
         return response()->json('Successfully created a User');
-        //
     }
 
     /**
@@ -138,6 +127,47 @@ class UserController extends Controller
 
         return response()->json('Successfully Updated');
         //
+    }
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy(Request $request, $id)
+	{
+// 		$request->user()->authorizeRoles('admin');
+		// delete
+		$user = Auth::user();
+		$owner_user_id = $user->id;
+
+		$deletedRows = User::where('id', $id)->where(
+				'owner_user_id', $owner_user_id)->delete();
+// 		User::destroy($id);
+
+		// redirect
+// 		Session::flash('message', 'Successfully deleted the project!');
+// 		return Redirect::to('project');
+	    return response()->json('Successfully Deleted the user');
+	}
+
+    public function tasks(Request $request, $userId)
+    {
+        // get all the tasks belongs to this given user Id
+        $tasks = Task::with(['user', 'project'])->where('assigned_user_id', $userId)->get();
+
+		// we need to return all users, project since they will be used
+		// in AddTask page , ToDO: remove this later on when use Redux ......
+		$owner_user_id = $this->getOwnerUserId();
+        $projects = Project::where('owner_user_id', $owner_user_id)->get();
+        $users = $this->getAllUsers();
+
+		$result['tasks'] = $tasks;
+		$result['projects'] = $projects;
+		$result['users'] = $users;
+
+        return response()->json($result);
     }
 
 }

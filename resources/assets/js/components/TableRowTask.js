@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
 
-/* Table row for user ....*/
-class TableRowUser extends Component {
+/* Table row for task ....*/
+class TableRowTask extends Component {
   constructor(props) {
       super(props);
       this.handleShowDelete = this.handleShowDelete.bind(this);
@@ -22,19 +22,21 @@ class TableRowUser extends Component {
             {this.props.obj.id}
           </td>
           <td>
-            {this.props.obj.name}
+            {this.props.obj.description}
+          </td>
+          <td className={this.props.obj.status.toString().toLowerCase()}>
+            {this.props.obj.status}
           </td>
           <td>
-            {this.props.obj.email}
+            {this.props.obj.user.email}
           </td>
           <td>
-            <Link to={"tasks/user/"+this.props.obj.id} className="btn btn-primary">Tasks</Link>
-            <Link to={"edit-user/"+this.props.obj.id} className="btn btn-primary">Edit</Link>
-			<input onClick={this.handleShowDelete} type="button" value="Delete" className="btn btn-danger"/>
+            <Link to={"edit-task/"+this.props.obj.id} className="btn btn-primary">Edit</Link>
+			<input onClick={this.handleShowDelete} type="button" value="Delete Task" className="btn btn-danger"/>
           </td>
         </tr>
     );
   }
 }
 
-export default TableRowUser;
+export default TableRowTask;

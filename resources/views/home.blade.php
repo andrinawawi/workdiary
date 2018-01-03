@@ -39,6 +39,6 @@
 </div>
  -->
  <!-- Scripts -->
-<script src="{{ asset('js/app.js?t=d983') }}"></script>
+<script src="{{ asset('js/app.js?t=j83') }}"></script>
 
 @endsection

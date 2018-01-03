@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Link, browserHistory } from 'react-router';
 import DialogBox from './Overlay';
+import { connect } from 'react-redux';
+import * as actions from '../Actions';
 
 class TableRow extends Component {
   constructor(props) {
@@ -49,4 +51,4 @@ class TableRow extends Component {
   }
 }
 
-export default TableRow;
+export default connect(null, actions)(TableRow);

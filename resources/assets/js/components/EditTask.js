@@ -4,6 +4,8 @@ import Select from 'react-select';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import { connect } from 'react-redux';
+import * as actions from '../Actions';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -32,6 +34,7 @@ class EditTask extends Component {
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleChangeStatus = this.handleChangeStatus.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
   
   // fetch task details from server....
@@ -39,20 +42,38 @@ class EditTask extends Component {
   componentDidMount(){
     axios.get(`/task/${this.props.params.id}/edit`)
     .then(response => {
-      this.setState({
-       	description: response.data.task.description,
-       	project_id: response.data.task.project_id,
-       	assigned_user_id: response.data.task.assigned_user_id,
-       	status: response.data.task.status,
-       	end_date: response.data.task.end_date ? moment(response.data.task.end_date) : null,
-    	projects: this.mapProjectsForSelectComponent(response.data.projects),
-	    users: this.mapUsersForSelectComponent(response.data.users)
-       	 });
+      this.props.editTask(response.data);
     })
     .catch(function (error) {
       console.log(error);
     })
+		console.log("EDIT TASK MOUNTED, update state");
   }
+
+	componentWillReceiveProps(nextProps){
+		console.log("EDIT TASK PROPS RECEIVED, update state");
+		console.log(nextProps);
+		// only proceed if change in realod property.....
+		if (this.props.description != nextProps.description ||
+			this.props.status != nextProps.status ||
+			this.props.end_date != nextProps.end_date ||
+			this.props.assigned_user_id != nextProps.assigned_user_id ||
+			this.props.project_id != nextProps.project_id) {
+				this.setState({
+					description: nextProps.description,
+					project_id: nextProps.project_id,
+					assigned_user_id: nextProps.assigned_user_id,
+					status: nextProps.status, 
+					end_date: nextProps.end_date ? moment(nextProps.end_date) : null,
+					projects: this.mapProjectsForSelectComponent(nextProps.projects),
+					users: this.mapUsersForSelectComponent(nextProps.users)
+				});
+		}
+	}
+
+	componentWillUpdate(nextProps, nextState) {
+		console.log("EDIT TASK COmp will update");
+	}
 
   handleChangeDesc(e){
     this.setState({
@@ -94,8 +115,8 @@ class EditTask extends Component {
     let uri = '/task/'+this.props.params.id;
     // Send POST server 
     axios.patch(uri, data).then((response) => {
-      // go back to task listing page 
-      browserHistory.goBack();  	
+      // go back to task listing page  and reload
+	  this.props.updateTaskList(true)
     });
     // also handle errors ......
   }
@@ -103,7 +124,7 @@ class EditTask extends Component {
   // go back....
   handleCancel(e) {
       // go back to task listing page 
-      browserHistory.goBack();  	
+	  this.props.updateTaskList()
   }
 
 	/* user select options array should contain objects {value, label}  */
@@ -127,13 +148,14 @@ class EditTask extends Component {
 	 	}
 	 	return result;
 	 }
-  
 
     render() {
+    	console.log("Edit task render....");
+    
       return (
       <div>
         <h1>Update Task</h1>
-        <form onSubmit={this.handleSubmit}>
+        <form>
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
@@ -200,8 +222,8 @@ class EditTask extends Component {
 		</div><br />
 		<div className="form-group">
 			<ButtonToolbar>
-			  <button className="btn btn-primary">Edit</button>
-			  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+			  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Edit</button>
+			  <button type="button" onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
 			</ButtonToolbar>
 		</div>
 	</form>
@@ -209,4 +231,18 @@ class EditTask extends Component {
       )
     }
 }
-export default EditTask;
+
+
+const mapStateToProps = state => {
+  return {
+    description: state.edit_task_reducer.description,
+    status: state.edit_task_reducer.status,
+    end_date: state.edit_task_reducer.end_date,
+    assigned_user_id: state.edit_task_reducer.assigned_user_id,
+    project_id: state.edit_task_reducer.project_id,
+    projects: state.project_reducer.projects,
+    users: state.project_reducer.users
+  }
+}
+
+export default connect(mapStateToProps, actions)(EditTask);

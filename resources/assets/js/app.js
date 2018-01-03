@@ -22,7 +22,14 @@ import CreateTask from './components/CreateTask';
 import EditTask from './components/EditTask';
 import DialogBox from './components/Overlay';
 
-render(
+/* https://www.codementor.io/kiok46/redux-store-actions-reducers-and-logger-get-started-b35h1pvpc **/
+import { Provider } from 'react-redux'; 
+import store from './Store';
+// import CustomTextInput from './Components/CustomTextInput';
+
+
+render((
+<Provider store={store}>
   <Router history={browserHistory}>
       <Route path="/" component={Master} >
         <Route path="/display-item" component={DisplayItem} />
@@ -42,7 +49,7 @@ render(
         <Route path="/edit-user/:id" component={EditUser} />
         <Route path="/add-task" component={CreateTask} />
         <Route path="/edit-task/:id" component={EditTask} />
-//         <Route path="/show-dia" component={DialogBox} />
       </Route>
-    </Router>,
+    </Router>
+  </Provider>),
         document.getElementById('example'));

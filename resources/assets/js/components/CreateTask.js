@@ -4,6 +4,9 @@ import Select from 'react-select';
 import { ButtonToolbar, Button } from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import * as actions from '../Actions';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -26,32 +29,37 @@ class CreateTask extends Component {
     this.handleChangeAssignee = this.handleChangeAssignee.bind(this);
     this.handleChangeDate = this.handleChangeDate.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
   
   	// Hack : We shouldn't call /task here, projects, users should already be available
   	// to this component.
-  	// ToDo: Use Redux to solve this.
+  	// ToDo: Use Redux to solve this........DONE
 	componentDidMount(){
-		axios.get('/task')
-		.then(response => {
-		 this.setState({
-		  projects: this.mapProjectsForSelectComponent(response.data.projects),
-		  users: this.mapUsersForSelectComponent(response.data.users)
-		  });
-			if (this.state.projects.length) {
-				this.setState({
-				  project_id: this.state.projects[0].value
-				});
-			}
-			if (this.state.users.length) {
-				this.setState({
-				  assigned_user_id: this.state.users[0].value
-				});
-			}
-		})		
-		.catch(function (error) {
-		 console.log(error);
-		})
+// 		axios.get('/task')
+// 		.then(response => {
+		var tmpPros = this.mapProjectsForSelectComponent(this.props.projects);
+		var tmpUsrs = this.mapUsersForSelectComponent(this.props.users);
+
+		this.setState({
+		  projects: tmpPros,
+		  users: tmpUsrs
+		});
+		// select some defaults......
+		if (tmpPros.length) {
+			this.setState({
+			  project_id: tmpPros[0].value
+			});
+		}
+		if (tmpUsrs.length) {
+			this.setState({
+			  assigned_user_id: tmpUsrs[0].value
+			});
+		}
+// 		})		
+// 		.catch(function (error) {
+// 		 console.log(error);
+// 		})
 	}
   
   handleChangeDesc(e){
@@ -87,8 +95,8 @@ class CreateTask extends Component {
     let uri = '/task';
     // Send POST server 
     axios.post(uri, data).then((response) => {
-      // go back to task listing page 
-      browserHistory.goBack();  	
+      // go back to task listing page  and reload
+	  this.props.updateTaskList(true)
     });
     // also handle errors ......
   }
@@ -96,7 +104,7 @@ class CreateTask extends Component {
   // go back....
   handleCancel(e) {
       // go back to task listing page 
-      browserHistory.goBack();  	
+	  this.props.updateTaskList()
   }
 	/* user select options array should contain objects {value, label}  */
 	 mapUsersForSelectComponent(data) {
@@ -125,7 +133,7 @@ class CreateTask extends Component {
       return (
       <div>
         <h1>Create a Task</h1>
-        <form onSubmit={this.handleSubmit}>
+        <form>
           <div className="row">
             <div className="col-md-6">
               <div className="form-group">
@@ -174,8 +182,8 @@ class CreateTask extends Component {
 		</div><br />
 		<div className="form-group">
 			<ButtonToolbar>
-			  <button className="btn btn-primary">Add</button>
-			  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+			  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Add</button>
+			  <button type="button" onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
 			</ButtonToolbar>
 		</div>
 	</form>
@@ -183,4 +191,12 @@ class CreateTask extends Component {
       )
     }
 }
-export default CreateTask;
+
+const mapStateToProps = state => {
+  return {
+    projects: state.project_reducer.projects,
+    users: state.project_reducer.users
+  }
+}
+
+export default connect(mapStateToProps, actions)(CreateTask);

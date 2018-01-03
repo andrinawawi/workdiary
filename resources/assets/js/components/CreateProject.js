@@ -1,6 +1,10 @@
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
 import { ButtonToolbar, Button } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import axios from 'axios';
+import * as actions from '../Actions';
+
 
 class CreateProject extends Component {
   constructor(props){
@@ -10,17 +14,21 @@ class CreateProject extends Component {
     this.handleChange1 = this.handleChange1.bind(this);
     this.handleChange2 = this.handleChange2.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
+
   handleChange1(e){
     this.setState({
       name: e.target.value
     })
   }
+
   handleChange2(e){
     this.setState({
       description: e.target.value
     })
   }
+
   handleSubmit(e){
     e.preventDefault();
     const project = {
@@ -29,14 +37,17 @@ class CreateProject extends Component {
     }
     let uri = '/project';
     axios.post(uri, project).then((response) => {
-      browserHistory.push('/projects');
+		// generate/dispatch action to display projects listing.....
+		// true for force reload of projects..
+		this.props.updateProjectList(true)
+//       browserHistory.push('/projects');
     });
   }
 
-  // go to back....
+  // go back....
   handleCancel(e) {
-      // to react tasks url
-      browserHistory.push('/projects');  	
+	  this.props.updateProjectList()
+//       browserHistory.push('/projects');
   }
 
     render() {
@@ -62,8 +73,8 @@ class CreateProject extends Component {
             </div><br />
             <div className="form-group">
 				<ButtonToolbar>
-				  <button onClick={this.handleSubmit} className="btn btn-primary">Add Project</button>
-				  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+				  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Add Project</button>
+				  <button type="button" onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
 				</ButtonToolbar>
             </div>
         </form>
@@ -71,4 +82,6 @@ class CreateProject extends Component {
       )
     }
 }
-export default CreateProject;
+
+export default connect(null, actions)(CreateProject);
+

@@ -30,12 +30,12 @@ class TaskController extends Controller
         $tasks = Task::with(['user', 'project'])->whereIn('project_id', $projectIds)->get();
 		// we need to return all users, project since they will be used
 		// in AddTask page , ToDO: remove this later on when use Redux ......
-        $projects = Project::where('owner_user_id', $owner_user_id)->get();
-        $users = $this->getAllUsers();
+//         $projects = Project::where('owner_user_id', $owner_user_id)->get();
+//         $users = $this->getAllUsers();
 
 		$result['tasks'] = $tasks;
-		$result['projects'] = $projects;
-		$result['users'] = $users;
+// 		$result['projects'] = $projects;
+// 		$result['users'] = $users;
 
         return response()->json($result);
     }
@@ -109,16 +109,16 @@ class TaskController extends Controller
 		// get the task
 		$task = Task::find($id);
 
-		$owner_user_id = $this->getOwnerUserId();
+// 		$owner_user_id = $this->getOwnerUserId();
 
 		// we need to return all users, project since they will be used
 		// in AddTask page , ToDO: remove this later on when use Redux ......
-        $projects = Project::where('owner_user_id', $owner_user_id)->get();
-        $users = $this->getAllUsers();
+//         $projects = Project::where('owner_user_id', $owner_user_id)->get();
+//         $users = $this->getAllUsers();
 
 		$result['task'] = $task;
-		$result['projects'] = $projects;
-		$result['users'] = $users;
+// 		$result['projects'] = $projects;
+// 		$result['users'] = $users;
 
         return response()->json($result);
     }
@@ -178,11 +178,14 @@ class TaskController extends Controller
 	{
 		// delete
 		$user = Auth::user();
-		$owner_user_id = $user->id;
+		$logged_user_id = $user->id;
 
 		$deletedRows = Task::where('id', $id)->where(
-				'assigned_user_id', $owner_user_id)->delete();
+				'assigned_user_id', $logged_user_id)->delete();
 // 		Task::destroy($id);
+
+		Log::info('Deleted tasks count : '.json_encode($deletedRows));
+		
 
 		// redirect
 // 		Session::flash('message', 'Successfully deleted the project!');

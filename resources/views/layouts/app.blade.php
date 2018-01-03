@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Work Diary') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css?t=223') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css?t=22ws3') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">

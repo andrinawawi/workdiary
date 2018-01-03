@@ -18,6 +18,14 @@ table .btn {
 .working {
 	color: #0805f6;
 }
+
+
+/* custom padding to li */
+@media (min-width: 768px) {
+	.navbar-nav > li {
+		padding: 15px;
+	}
+}
 @charset "UTF-8";
 
 /*!

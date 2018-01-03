@@ -1,16 +1,9 @@
-// var Modal = require('react-bootstrap').Modal;
-// var Button = require('react-bootstrap').Button;
 
 import React, {Component} from 'react';
-// import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 import { Link, browserHistory } from 'react-router';
-// import TableRow from './TableRow';
-
-// import React from 'react';
-// import createClass from 'create-react-class';
-// import PropTypes from 'prop-types';
-// import Select from 'react-select';
+import { connect } from 'react-redux';
+import * as actions from '../Actions';
 import MultiSelectField from './Multiselect';
 
 class DialogBox extends Component {
@@ -44,16 +37,14 @@ class DialogBox extends Component {
 		// send POST AJAX to update team members 
        axios.post(`project/${this.props.projectId}/update_users`, { users: this.state.users})
        .then(response => {
-         console.log("Updated users ...");
-//          this.setState({ projects: response.data.projects, 
-//          	 users: this.mapUsersForSelect(response.data.users)});
+         console.log("Updated project team ...");
+		// navigate to Projects tab again....
+		this.props.updateProjectList(true, true);
        })
        .catch(function (error) {
          console.log(error);
        })
        this.setState({ showing: false });
-       // navigate to Projects tab again....
-// 	   browserHistory.push('/projects');
     }
     
 	handleSelectChange (value) {
@@ -86,4 +77,4 @@ class DialogBox extends Component {
 
 DialogBox.defaultProps = {show: false};
 
-export default DialogBox;
+export default connect(null, actions)(DialogBox);

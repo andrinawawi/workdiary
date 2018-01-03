@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { Link, browserHistory } from 'react-router';
+import { connect } from 'react-redux';
 import TableRowTask from './TableRowTask';
 import CommonDialog from './CommonOverlay';
+import * as actions from '../Actions';
 
 /* This is main task listing component. It is used to display all tasks
  and task specific to a Project or a User.....*/
@@ -23,6 +25,7 @@ class Tasks extends Component {
      }
 
      componentDidMount(){
+//      	console.log(" tasks list mounted");
      	this.initializeComponent(this.props);
      }
 
@@ -31,13 +34,15 @@ class Tasks extends Component {
 		 */
 	  componentWillReceiveProps(nextProps){
 		 // send new props to update state and invoke re-render of component.....
-		if (this.props.route.path != nextProps.route.path) {
+		 if (this.props.route.path != nextProps.route.path ||
+			this.props.reload != nextProps.reload) {
 	     	this.initializeComponent(nextProps);
 	     }
 	  }
 	  
 	  initializeComponent(props) {
      	var taskFetchUri = '/task';
+     	var that = this;
      	
      	// fetch tasks from depending on url...
      	if (props.route.path.match("project")) {
@@ -49,22 +54,24 @@ class Tasks extends Component {
      	} else {
      		console.log("is Normal");
      	}
-       axios.get(taskFetchUri)
-       .then(response => {
-         this.setState({
-          tasks: response.data.tasks,
-		});
-       })
-       .catch(function (error) {
-         console.log(error);
-       })	  
+     	if (props.reload) {
+	     	console.log("INIT  Component TASK list");
+
+		   axios.get(taskFetchUri)
+		   .then(response => {
+				props.showTasks({ tasks: response.data.tasks});
+		   })
+		   .catch(function (error) {
+			 console.log(error);
+		   })
+		}
 	  }
 
      tabRow(){
-       if(this.state.tasks instanceof Array){
+       if(this.props.tasks instanceof Array){
          var that = this;
 
-         return this.state.tasks.map(function(object, i){
+         return this.props.tasks.map(function(object, i){
              return <TableRowTask obj={object} key={i} delhandler={that.handleShowDelete}/>;
          })
        }
@@ -78,9 +85,17 @@ class Tasks extends Component {
 
 	// This method sends Delete Url request to server.....
 	 handleDelete() {
+	 	var that = this;
 		let uri = `/task/${this.state.taskId}`;
-		axios.delete(uri);
-		browserHistory.push('/tasks');
+
+		axios.delete(uri)
+	   .then(response => {
+			// dispatch action to reload task listing....
+			that.props.updateTaskList(true, true);
+	   })
+	   .catch(function (error) {
+		 console.log(error);
+	   })
 		
 		// also reset all dialogs to Close state......
 		this.resetDialogState();
@@ -121,7 +136,7 @@ class Tasks extends Component {
               {this.tabRow()}
             </tbody>
         </table>
-		<CommonDialog show={this.state.showDelete} title="Delete Task"
+		<CommonDialog show={this.state.showDelete} title="Delete Task (Only Assigned user can delete the task)"
 	body="Are you sure want to Delete this task! " taskId={this.state.taskId}
 	oktitle="Delete" handleOK={this.handleDelete} handleCancel={this.resetDialogState}/>
 
@@ -133,4 +148,13 @@ class Tasks extends Component {
 Tasks.defaultProps = {
 }
 
-export default Tasks;
+const mapStateToProps = state => {
+  return {
+    reload: state.task_reducer.reload,
+    projects: state.project_reducer.projects,
+    users: state.project_reducer.users,
+    tasks: state.task_reducer.tasks
+  }
+}
+
+export default connect(mapStateToProps, actions)(Tasks);

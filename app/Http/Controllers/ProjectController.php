@@ -188,19 +188,19 @@ class ProjectController extends Controller
 	
     public function tasks(Request $request, $projectId)
     {
-		$owner_user_id = $this->getOwnerUserId();
+// 		$owner_user_id = $this->getOwnerUserId();
 
         // get all the tasks belongs to this given project Id
         $tasks = Task::with(['user', 'project'])->where('project_id', $projectId)->get();
 
 		// we need to return all users, project since they will be used
 		// in AddTask page , ToDO: remove this later on when use Redux ......
-        $projects = Project::where('owner_user_id', $owner_user_id)->get();
-        $users = $this->getAllUsers();
+//         $projects = Project::where('owner_user_id', $owner_user_id)->get();
+//         $users = $this->getAllUsers();
 
 		$result['tasks'] = $tasks;
-		$result['projects'] = $projects;
-		$result['users'] = $users;
+// 		$result['projects'] = $projects;
+// 		$result['users'] = $users;
 
         return response()->json($result);
     }

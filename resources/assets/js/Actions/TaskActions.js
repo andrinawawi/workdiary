@@ -12,13 +12,6 @@ export const showTasks = (data) => {
   };
 }
 
-export const showTask = (id) => {
-  return {
-    type: types.SHOW_TASK,
-    task_id: id
-  };
-}
-
 export const createTask = () => {
   return {
     type: types.CREATE_TASK,

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { Link, browserHistory } from 'react-router';
+import { connect } from 'react-redux';
+import * as actions from '../Actions';
 import TableRowUser from './TableRowUser';
 import CommonDialog from './CommonOverlay';
 
@@ -30,11 +32,48 @@ class Users extends Component {
        })
      }
 
+     /* Send AJAX to fetch all Projects along with their users, and show the associated users
+        as selected & others available for select.....     
+     */
+     componentDidMount(){
+     	this.initializeComponent(this.props);
+     }
+
+	/* 
+	 refer : https://stackoverflow.com/a/38916204/1331003
+	 */
+	componentWillReceiveProps(nextProps){
+// 		console.log(nextProps);
+		// only proceed if change in realod property.....
+		if (this.props.reload != nextProps.reload) {
+	     	this.initializeComponent(nextProps);
+	    }
+	}
+	
+	// Fetch data from server if required .......
+	initializeComponent(props) {
+     	if (props.reload) {
+	     	console.log("INIT  Component USER LIST");
+
+		   axios.get('/user')
+		   .then(response => {
+			// dispatch action to list users, pass response data......
+			props.showUsers({users: response.data});
+		   })
+		   .catch(function (error) {
+			 console.log(error);
+		   })
+			// also reset all dialogs to Close state......i.e. close all dialogs
+			this.resetDialogState();
+       }
+	}
+
+
      tabRow(){
-       if(this.state.users instanceof Array){
+       if(this.props.users instanceof Array){
          var that = this;
 
-         return this.state.users.map(function(object, i){
+         return this.props.users.map(function(object, i){
              return <TableRowUser obj={object} key={i} delhandler={that.handleShowDelete}/>;
          })
        }
@@ -53,9 +92,15 @@ class Users extends Component {
 	// This method sends Delete Url request to server.....
 	 handleDelete() {
 		let uri = `/user/${this.state.userId}`;
-		axios.delete(uri);
-		browserHistory.push('/users');
-		
+		axios.delete(uri)
+	   .then(response => {
+			// dispatch action to reload list projects....
+			that.props.updateUserList(true, true);
+	   })
+	   .catch(function (error) {
+		 console.log(error);
+	   })
+
 		// also reset all dialogs to Close state......
 		this.resetDialogState();
 	 }
@@ -103,8 +148,12 @@ class Users extends Component {
   }
 }
 
-Users.defaultProps = {  
-    isProject: true  
-}  
 
-export default Users;
+const mapStateToProps = state => {
+  return {
+    reload: state.user_reducer.reload,
+    users: state.user_reducer.users
+  }
+}
+
+export default connect(mapStateToProps, actions)(Users);

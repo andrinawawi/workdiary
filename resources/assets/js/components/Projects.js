@@ -50,7 +50,7 @@ class Projects extends Component {
 	// Fetch data from server if required .......
 	initializeComponent(props) {
      	if (props.reload) {
-	     	console.log("INIT  Component");
+// 	     	console.log("INIT  Component");
 
      		var that = this;
 		   axios.get('/project')

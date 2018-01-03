@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { Link, browserHistory } from 'react-router';
 import { ButtonToolbar, Button } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import * as actions from '../Actions';
 
 class EditUser extends Component {
   constructor(props) {
@@ -10,17 +12,31 @@ class EditUser extends Component {
       this.handleChange1 = this.handleChange1.bind(this);
       this.handleChange2 = this.handleChange2.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
+      this.handleCancel = this.handleCancel.bind(this);
   }
 
+	// fetch user data & update state....
   componentDidMount(){
     axios.get(`/user/${this.props.params.id}/edit`)
     .then(response => {
-      this.setState({ name: response.data.name, email: response.data.email });
+      this.props.editUser({ name: response.data.name, email: response.data.email });
     })
     .catch(function (error) {
       console.log(error);
     })
   }
+    
+	componentWillReceiveProps(nextProps){
+		// only proceed if change in existing property.....
+		if (this.props.name != nextProps.name ||
+			this.props.email != nextProps.email) {
+			this.setState({
+			  name: nextProps.name,
+			  email: nextProps.email
+			})
+		}
+	}
+  
   handleChange1(e){
    // setState is shallow merge of new state into previous.....
     this.setState({
@@ -41,14 +57,15 @@ class EditUser extends Component {
     }
     let uri = '/user/'+this.props.params.id;
     axios.patch(uri, project).then((response) => {
-          this.props.history.push('/users');
+		  // go back to User listing page 
+		  this.props.updateUserList(true);
     });
   }
   
   // go to back....
   handleCancel(e) {
-      // to react tasks url
-      browserHistory.push('/users');  	
+      // go back to User listing page 
+	  this.props.updateUserList()
   }
   
   render(){
@@ -57,9 +74,6 @@ class EditUser extends Component {
         <h1>Update User</h1>
         <div className="row">
           <div className="col-md-10"></div>
-          <div className="col-md-2">
-            <Link to="/users" className="btn btn-success">Back</Link>
-          </div>
         </div>
         <form>
             <div className="form-group">
@@ -79,8 +93,8 @@ class EditUser extends Component {
 
             <div className="form-group">
 				<ButtonToolbar>
-				  <button onClick={this.handleSubmit} className="btn btn-primary">Update</button>
-				  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+				  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Update</button>
+				  <button type="button" onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
 				</ButtonToolbar>
             </div>
         </form>
@@ -88,4 +102,12 @@ class EditUser extends Component {
     )
   }
 }
-export default EditUser;
+
+const mapStateToProps = state => {
+  return {
+    name: state.edit_user_reducer.name,
+    email: state.edit_user_reducer.email,
+  }
+}
+
+export default connect(mapStateToProps, actions)(EditUser);

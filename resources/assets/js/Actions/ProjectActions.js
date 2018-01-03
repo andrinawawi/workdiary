@@ -13,13 +13,6 @@ export const showProjects = (data) => {
   };
 }
 
-export const showProject = (id) => {
-  return {
-    type: types.SHOW_PROJECT,
-    payload: id
-  };
-}
-
 export const createProject = () => {
   return {
     type: types.CREATE_PROJECT,

@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {browserHistory} from 'react-router';
 import { ButtonToolbar, Button } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import * as actions from '../Actions';
 
 class CreateUser extends Component {
   constructor(props){
@@ -10,6 +12,7 @@ class CreateUser extends Component {
     this.handleChange1 = this.handleChange1.bind(this);
     this.handleChange2 = this.handleChange2.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCancel = this.handleCancel.bind(this);
   }
   handleChange1(e){
     this.setState({
@@ -29,13 +32,14 @@ class CreateUser extends Component {
     }
     let uri = '/user';
     axios.post(uri, data).then((response) => {
-      browserHistory.push('/users');
+      // go back to task listing page  and reload
+	  this.props.updateTaskList(true)
     });
   }
   // go to back....
   handleCancel(e) {
-      // to react tasks url
-      browserHistory.push('/users');  	
+      // go back to User listing page 
+	  this.props.updateUserList()
   }
 
     render() {
@@ -61,8 +65,8 @@ class CreateUser extends Component {
             </div><br />
             <div className="form-group">
 				<ButtonToolbar>
-				  <button onClick={this.handleSubmit} className="btn btn-primary">Add User</button>
-				  <button onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
+				  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Add User</button>
+				  <button type="button" onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
 				</ButtonToolbar>
             </div>
         </form>
@@ -70,4 +74,5 @@ class CreateUser extends Component {
       )
     }
 }
-export default CreateUser;
+
+export default connect(null, actions)(CreateUser);

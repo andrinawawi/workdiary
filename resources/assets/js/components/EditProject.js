@@ -16,7 +16,7 @@ class EditProject extends Component {
   }
 
   componentDidMount(){
-	console.log("COmponent Task Edit mounted, update state");
+// 	console.log("COmponent Project Edit mounted, update state");
   	
     axios.get(`/project/${this.props.params.id}/edit`)
     .then(response => {

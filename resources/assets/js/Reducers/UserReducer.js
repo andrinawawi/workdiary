@@ -1,37 +1,28 @@
 import {
   CHANGE_MAINPAGE,
-  SHOW_TASKS,
-  UPDATE_TASKS,
-  EDIT_TASK,
-  CREATE_TASK,
-  DELETE_TASK  
+  SHOW_USERS,
+  UPDATE_USERS
 } from '../Actions/types';
 
 // This is only slice of whole app state, related to this reducer.....
 const INITIAL_STATE = {
-  tasks: [],
+  users: [],
   reload: true
 };
 
 export default ( state=INITIAL_STATE, action ) => {
   switch (action.type) {
     case CHANGE_MAINPAGE:
-	   console.log("This is change main page in Task Reducer, required for reload prop only");
-//     	console.log(state);
+	   console.log("This is change main page in User Reducer, required to SET reload prop only");
        return { ...state, reload: !!action.reload }
 
-    case SHOW_TASKS:
+    case SHOW_USERS:
 	// this will reset reload props to false....
-       return { ...state, tasks: action.tasks, reload: !!action.reload }
+       return { ...state, users: action.users, reload: !!action.reload }
 
-    case UPDATE_TASKS:
+    case UPDATE_USERS:
 	// this will reset reload props to input....
        return { ...state, reload: !!action.reload }
-
-    case DELETE_TASK:
-			console.log("This is for delete task, listing reload. Since it already on same url");
-// 			console.log(state);
-       return { ...state, reload: true}
 
     default:
       /*

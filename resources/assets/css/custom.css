@@ -31,3 +31,11 @@
 .ReactTable .rt-thead .rt-tr {
 	text-align: left !important;
 }
+
+#quotes {
+	min-height: 30px;
+	font-family: "Raleway", sans-serif, Helvetica;
+	font-size: 24px;
+	text-align: center;
+	padding-top: 30px;
+}

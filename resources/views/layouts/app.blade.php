@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Work Diary') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css?t=2263') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css?t=226343') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -71,8 +71,33 @@
             </div>
         </nav>
 
-        @yield('content')
+        @yield('content')        
     </div>
+	<footer>
+		<div id="quotes"></div>
+		<script>
+			var quotesArr = [
+				"There isn't a way things should be. There's just what happens, and what we do.",
+				"No one can make you feel inferior without your consent.",
+				"It's not about how hard you can hit; it's about how hard you can get hit and keep moving forward.",
+				"If you want to go fast, go alone. If you want to go far, go together.",
+				"Believe you can and you're halfway there.",
+				"There is no elevator to success — you have to take the stairs.",
+				"It's supposed to be hard. If it were easy, everyone would do it.",
+				"I have not failed. I've just found 10,000 ways that won't work.",
+				"Whoever is happy will make others happy too.",
+				"Problems are no stop signs, they are guidelines.",
+				"The only true wisdom is in knowing you know nothing."	
+			];
+			
+			// display random quote based on day of month....one per day....
+			var dayOfMonth = new Date().getDate();
+			var quoteIndex = dayOfMonth%quotesArr.length;
 
+			document.getElementById("quotes").innerHTML = quotesArr[quoteIndex];
+		</script>
+	</footer>
 </body>
+
+
 </html>

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import { Link } from 'react-router';
-import TableRow from './TableRow';
+// import TableRow from './TableRow';
 
 class DisplayItem extends Component {
   constructor(props) {
@@ -16,13 +16,6 @@ class DisplayItem extends Component {
        .catch(function (error) {
          console.log(error);
        })
-     }
-     tabRow(){
-       if(this.state.items instanceof Array){
-         return this.state.items.map(function(object, i){
-             return <TableRow obj={object} key={i} />;
-         })
-       }
      }
 
   render(){
@@ -47,7 +40,6 @@ class DisplayItem extends Component {
             </tr>
             </thead>
             <tbody>
-              {this.tabRow()}
             </tbody>
         </table>
     </div>

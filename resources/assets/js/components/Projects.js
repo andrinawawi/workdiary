@@ -2,11 +2,13 @@ import React, {Component} from 'react';
 import { Link, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import axios from 'axios';
-import TableRow from './TableRow';
 import CommonDialog from './CommonOverlay';
 import DialogBox from './Overlay';
 import MultiSelectField from './Multiselect';
+import ReactTable from 'react-table'
 import * as actions from '../Actions';
+
+import 'react-table/react-table.css'
 
 class Projects extends Component {
 	 constructor(props) {
@@ -39,7 +41,6 @@ class Projects extends Component {
 	 refer : https://stackoverflow.com/a/38916204/1331003
 	 */
 	componentWillReceiveProps(nextProps){
-//      	console.log("project PROPS RECEIVED");
 // 		console.log(nextProps);
 		// only proceed if change in realod property.....
 		if (this.props.reload != nextProps.reload) {
@@ -58,7 +59,6 @@ class Projects extends Component {
 			// dispatch action to list projects, pass response data......
 			props.showProjects({ projects: response.data.projects, 
 				 users: response.data.users});
-// 				 users: that.mapUsersForSelect(response.data.users)});
 		   })
 		   .catch(function (error) {
 			 console.log(error);
@@ -80,7 +80,8 @@ class Projects extends Component {
 	 }
 
 	// This method displays update team dialog.....
-     handleShowTeam(projectId){
+     handleShowTeam(event){
+     	var projectId = event.target.dataset.id;
      	var newstate = Object.assign(this.state);
      	
 		// also map project associated selected users for dialog to display already selected.....
@@ -102,7 +103,8 @@ class Projects extends Component {
      }
 
 	// This method update state to display Delete dialog....
-     handleShowDelete(projectId){
+     handleShowDelete(event){
+     	var projectId = event.target.dataset.id;
      	var newstate = Object.assign(this.state);
      	
      	newstate.showDelete = true;
@@ -138,14 +140,34 @@ class Projects extends Component {
      	this.setState(newstate);
 	 }
 
-     tabRow(){
-       if(this.props.projects instanceof Array){
-       	var that = this;
-         return this.props.projects.map(function(object, i){
-             return <TableRow obj={object} key={i}
-             	 handler={that.handleShowTeam} delhandler={that.handleShowDelete}/>;
-         })
-       }
+     projectTable(){
+     {/*
+     Custom Cell react table from https://react-table.js.org/#/story/cell-renderers-custom-components
+     */}
+		const columns = [
+		{
+			Header: 'ID',
+			accessor: 'id' // String-based value accessors!
+		  }, {
+			Header: 'Name',
+			accessor: 'name',
+		  }, {
+			Header: 'Description',
+			accessor: 'description',
+		  }, {
+			Header: 'Action',
+			accessor: 'id', // Required because our accessor is not a string
+			Cell: obj => (
+				<span>
+					<input onClick={this.handleShowTeam} data-id={obj.value} type="button" value="Team" className="btn btn-info"/>
+					<Link to={"tasks/project/"+obj.value} className="btn btn-primary">Tasks</Link>
+					<Link to={"edit-project/"+obj.value} className="btn btn-primary">Edit</Link>
+					<input onClick={this.handleShowDelete}  data-id={obj.value} type="button" value="Delete" className="btn btn-danger"/>			
+				</span>
+			)
+		  }];
+		  return <ReactTable data={this.props.projects} columns={columns}
+		  	          defaultPageSize={5} className="-striped -highlight"/>
      }
 
   onPageChange(e) {
@@ -168,19 +190,9 @@ class Projects extends Component {
             <a data-page="add-project" onClick={this.onPageChange}>Create the Project</a>
           </div>
         </div><br/>
-        <table className="table table-hover">
-            <thead>
-				<tr>
-					<td>ID</td>
-					<td>Name</td>
-					<td>Description</td>
-					<td>Actions</td>
-				</tr>
-            </thead>
-            <tbody>
-              {this.tabRow()}
-            </tbody>
-        </table>
+
+		{this.projectTable()}
+
     	<DialogBox show={this.state.show} title="Update Project Team" projectId={this.state.projectId}
     	 	alreadyAssociated={this.state.alreadyAssociated} users={
     	 		this.mapUsersForSelect(this.props.users)}

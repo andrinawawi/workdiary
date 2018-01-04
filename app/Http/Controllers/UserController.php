@@ -159,13 +159,13 @@ class UserController extends Controller
 
 		// we need to return all users, project since they will be used
 		// in AddTask page , ToDO: remove this later on when use Redux ......
-		$owner_user_id = $this->getOwnerUserId();
-        $projects = Project::where('owner_user_id', $owner_user_id)->get();
-        $users = $this->getAllUsers();
+// 		$owner_user_id = $this->getOwnerUserId();
+//         $projects = Project::where('owner_user_id', $owner_user_id)->get();
+//         $users = $this->getAllUsers();
 
 		$result['tasks'] = $tasks;
-		$result['projects'] = $projects;
-		$result['users'] = $users;
+// 		$result['projects'] = $projects;
+// 		$result['users'] = $users;
 
         return response()->json($result);
     }

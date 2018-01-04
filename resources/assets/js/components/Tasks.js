@@ -2,9 +2,11 @@ import React, {Component} from 'react';
 import axios from 'axios';
 import { Link, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
-import TableRowTask from './TableRowTask';
 import CommonDialog from './CommonOverlay';
 import * as actions from '../Actions';
+import ReactTable from 'react-table'
+
+import 'react-table/react-table.css'
 
 /* This is main task listing component. It is used to display all tasks
  and task specific to a Project or a User.....*/
@@ -67,6 +69,38 @@ class Tasks extends Component {
 		}
 	  }
 
+     taskTable(){
+     {/*
+     Custom Cell react table from https://react-table.js.org/#/story/cell-renderers-custom-components
+     */}
+		const columns = [
+		{
+			Header: 'ID',
+			accessor: 'id' // String-based value accessors!
+		  }, {
+			Header: 'Description',
+			accessor: 'description',
+		  }, {
+			Header: 'Status',
+			accessor: 'status',
+		    Cell: props => <span className={props.value.toString().toLowerCase()}>{props.value}</span> // Custom cell components!
+		  }, {
+			Header: 'Assignee',
+			accessor: 'user.email',
+		  }, {
+			Header: 'Action',
+			accessor: 'id', // Required because our accessor is not a string
+			Cell: obj => (
+				<span>
+					<Link to={"edit-task/"+obj.value} className="btn btn-primary">Edit</Link>
+					<input onClick={this.handleShowDelete}  data-id={obj.value} type="button" value="Delete" className="btn btn-danger"/>			
+				</span>
+			)
+		  }];
+		  return <ReactTable data={this.props.tasks} columns={columns}
+		  	          defaultPageSize={5} className="-striped -highlight"/>
+     }
+
      tabRow(){
        if(this.props.tasks instanceof Array){
          var that = this;
@@ -78,7 +112,8 @@ class Tasks extends Component {
      }
      
 	// This method update state to display Delete task dialog....
-     handleShowDelete(taskId){
+     handleShowDelete(event){
+     	var taskId = event.target.dataset.id;
      	// setState is shallow merge only......
      	this.setState({showDelete: true, taskId: taskId});
      }
@@ -122,20 +157,8 @@ class Tasks extends Component {
           </div>
         </div><br />
 
-        <table className="table table-hover">
-            <thead>
-            <tr>
-                <td>ID</td>
-                <td>Description</td>
-                <td>Status</td>
-                <td>Assignee</td>
-                <td>Actions</td>
-            </tr>
-            </thead>
-            <tbody>
-              {this.tabRow()}
-            </tbody>
-        </table>
+		{this.taskTable()}
+
 		<CommonDialog show={this.state.showDelete} title="Delete Task (Only Assigned user can delete the task)"
 	body="Are you sure want to Delete this task! " taskId={this.state.taskId}
 	oktitle="Delete" handleOK={this.handleDelete} handleCancel={this.resetDialogState}/>

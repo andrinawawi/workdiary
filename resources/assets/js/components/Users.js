@@ -3,8 +3,10 @@ import axios from 'axios';
 import { Link, browserHistory } from 'react-router';
 import { connect } from 'react-redux';
 import * as actions from '../Actions';
-import TableRowUser from './TableRowUser';
 import CommonDialog from './CommonOverlay';
+import ReactTable from 'react-table'
+
+import 'react-table/react-table.css'
 
 class Users extends Component {
   constructor(props) {
@@ -69,18 +71,38 @@ class Users extends Component {
 	}
 
 
-     tabRow(){
-       if(this.props.users instanceof Array){
-         var that = this;
-
-         return this.props.users.map(function(object, i){
-             return <TableRowUser obj={object} key={i} delhandler={that.handleShowDelete}/>;
-         })
-       }
+     userTable(){
+     {/*
+     Custom Cell react table from https://react-table.js.org/#/story/cell-renderers-custom-components
+     */}
+		const columns = [
+		{
+			Header: 'ID',
+			accessor: 'id' // String-based value accessors!
+		  }, {
+			Header: 'Name',
+			accessor: 'name',
+		  }, {
+			Header: 'Email',
+			accessor: 'email',
+		  }, {
+			Header: 'Action',
+			accessor: 'id', // Required because our accessor is not a string
+			Cell: obj => (
+				<span>
+					<Link to={"tasks/user/"+obj.value} className="btn btn-primary">Tasks</Link>
+					<Link to={"edit-user/"+obj.value} className="btn btn-primary">Edit</Link>
+					<input onClick={this.handleShowDelete}  data-id={obj.value} type="button" value="Delete" className="btn btn-danger"/>			
+				</span>
+			)
+		  }];
+		  return <ReactTable data={this.props.users} columns={columns}
+		  	          defaultPageSize={5} className="-striped -highlight"/>
      }
      
 	// This method update state to display Delete user dialog....
-     handleShowDelete(userId){
+     handleShowDelete(event){
+     	var userId = event.target.dataset.id;
      	var newstate = Object.assign(this.state);
      	
      	newstate.showDelete = true;
@@ -126,19 +148,8 @@ class Users extends Component {
           </div>
         </div><br />
 
-        <table className="table table-hover">
-            <thead>
-            <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Email</td>
-                <td>Actions</td>
-            </tr>
-            </thead>
-            <tbody>
-              {this.tabRow()}
-            </tbody>
-        </table>
+		{this.userTable()}
+
 		<CommonDialog show={this.state.showDelete} title="Delete User"
 	body="Are you sure want to Delete this user! " userId={this.state.userId}
 	oktitle="Delete" handleOK={this.handleDelete} handleCancel={this.resetDialogState}/>

@@ -1,5 +1,5 @@
 /* margin for table buttons */
-table .btn {
+.ReactTable .btn {
 	margin-right: 5px;
 }
 
@@ -25,4 +25,9 @@ table .btn {
 	.navbar-nav > li {
 		padding: 15px;
 	}
+}
+
+/* text align react table headers HACK*******/
+.ReactTable .rt-thead .rt-tr {
+	text-align: left !important;
 }

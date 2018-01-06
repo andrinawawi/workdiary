@@ -39,3 +39,8 @@
 	text-align: center;
 	padding-top: 30px;
 }
+
+.searchText {
+	width: 200px;
+	margin-right: 10px;
+}

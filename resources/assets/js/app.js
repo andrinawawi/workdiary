@@ -21,6 +21,7 @@ import Tasks from './components/Tasks';
 import CreateTask from './components/CreateTask';
 import EditTask from './components/EditTask';
 import DialogBox from './components/Overlay';
+import Search from './components/Search';
 
 /* https://www.codementor.io/kiok46/redux-store-actions-reducers-and-logger-get-started-b35h1pvpc **/
 import { Provider } from 'react-redux'; 
@@ -39,6 +40,7 @@ render((
         <Route path="/projects" component={Projects} />
         <Route path="/users" component={Users} />
         <Route path="/tasks" component={Tasks} />
+        <Route path="/search" component={Search} />
 
         <Route path="/tasks/project/:id" component={Tasks} />
         <Route path="/tasks/user/:id" component={Tasks} />

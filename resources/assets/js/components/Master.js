@@ -39,6 +39,7 @@ class Master extends Component {
               <li data-page="projects" onClick={this.onPageChange}>Projects</li>
               <li data-page="users" onClick={this.onPageChange}>Users</li>
               <li data-page="tasks" onClick={this.onPageChange}>Tasks</li>
+              <li data-page="search" onClick={this.onPageChange}>Search</li>
             </ul>
           </div>
       </nav>

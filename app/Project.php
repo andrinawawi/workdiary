@@ -2,10 +2,13 @@
 
 namespace App;
 
+use Laravel\Scout\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use Searchable;
+
     //
 	public function users()
 	{

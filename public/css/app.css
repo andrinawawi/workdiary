@@ -38,6 +38,11 @@
 	font-size: 24px;
 	text-align: center;
 	padding-top: 30px;
+}
+
+.searchText {
+	width: 200px;
+	margin-right: 10px;
 }@charset "UTF-8";
 
 /*!

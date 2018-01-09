@@ -69,10 +69,19 @@ class RegisterController extends Controller
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
-
+		
 		// by default create admin 'user' for user registered via login interface...
 		$user->roles()->attach(Role::where('name', 'admin')->first());
-        
+
+		$securedApiKey = \AlgoliaSearch\Client::generateSecuredApiKey(
+		  config('ALGOLIA_SEARCH_KEY'), // Make sure to use a search key
+		  [
+			'filters' => 'owner_user_id:'.$user->id
+		  ]
+		);
+		$user['search_key'] = $securedApiKey;
+		$user->save();
+
         return $user;
     }
 }

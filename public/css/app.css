@@ -43,6 +43,10 @@
 .searchText {
 	width: 200px;
 	margin-right: 10px;
+}
+
+.warn {
+	color: red;
 }@charset "UTF-8";
 
 /*!

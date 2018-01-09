@@ -11,7 +11,7 @@
     <title>{{ config('app.name', 'Work Diary') }}</title>
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css?t=243') }}" rel="stylesheet">
+    <link href="{{ asset('css/app.css?t=2443') }}" rel="stylesheet">
 	<link rel="stylesheet" href="https://unpkg.com/react-instantsearch-theme-algolia@4.0.0/style.min.css">
 </head>
 <body>
@@ -71,7 +71,6 @@
                 </div>
             </div>
         </nav>
-
         @yield('content')        
     </div>
 	<footer>

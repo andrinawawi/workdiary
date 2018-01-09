@@ -25,6 +25,8 @@ Route::get('/admin', 'HomeController@myadmin')->name('home');
 
 // Route::get('/project', 'ProjectController@index')->name('home');
 
+Route::get('/user/getSearchKey', 'UserController@getSearchKey')->name('user.getSearchKey');
+
 Route::resource('project', 'ProjectController');
 
 Route::resource('user', 'UserController');
@@ -39,3 +41,5 @@ Route::post('/project/{project}/update_users', 'ProjectController@updateusers')-
 Route::get('/project/{project}/tasks', 'ProjectController@tasks')->name('home');
 
 Route::get('/user/{user}/tasks', 'UserController@tasks')->name('home');
+
+// Route::get('/user/{user}/getSearchKey', 'UserController@getSearchKey')->name('home');

@@ -12,9 +12,19 @@ use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Route;
 
 class UserController extends Controller
 {
+	public function __construct()
+	{
+		$this->middleware('auth');
+		$route = Route::currentRouteAction();
+		
+		Log::info('getSearch key CALLED Project users : '.$route);
+		
+	}
+
     /**
      * Display a listing of the resource.
      *
@@ -83,6 +93,8 @@ class UserController extends Controller
      */
     public function show($id)
     {
+		Log::info('show called but SHOULD not : ');
+    	
         //
     }
 
@@ -169,5 +181,21 @@ class UserController extends Controller
 
         return response()->json($result);
     }
+
+	/*
+		Custom attribute to find algolia filter search key....
+	*/
+	public function getSearchKey()
+	{
+		Log::info('getSearch key prok Project users : ');
+		$owner_user_id = $this->getOwnerUserId();
+
+    	// search_key is either logged_in user, if his search_key is Noy NULL...
+    	/// or from his owner_user_id's search_key ....						
+		$owner_user = User::find($owner_user_id);
+		$search_key = $owner_user->search_key;
+		
+		return $search_key;
+	}
 
 }

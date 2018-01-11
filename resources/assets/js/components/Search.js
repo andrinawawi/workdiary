@@ -175,7 +175,7 @@ class Search extends Component {
 {/*
 		<span className="warn"> Currently It does not show user specific results. Work in Progress.</span>
 		*/}		
-		<span> If you see ambiguous results, kindly refer <a href="https://www.algolia.com/doc/guides/textual-relevance/typo-tolerance/">Typo Tolerance.</a></span>
+		<span> If you see ambiguous results, kindly refer <a target="_blank" href="https://www.algolia.com/doc/guides/textual-relevance/typo-tolerance/">Typo Tolerance.</a></span>
   	  </div>
     )
   }

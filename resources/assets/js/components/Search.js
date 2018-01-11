@@ -34,7 +34,7 @@ class Search extends Component {
 	   axios.get('/user/getSearchKey')
 	   .then(response => {
 // 			this.client = algoliasearch("3TH8TDEWM4", 'YTdkYjA5YTI4MWRhNTQ2MWM1ZDRmZDI1OWFiY2IzODU0Nzk4NjM4ODQyOTBkMGNhODA1ZmQwMmQ3ZTg0NGNhYmZpbHRlcnM9b3duZXJfdXNlcl9pZCUzQTE2');
-//			this.client = algoliasearch("3TH8TDEWM4", response.data);
+			this.client = algoliasearch("3TH8TDEWM4", response.data);
 		});
      }
 
@@ -75,7 +75,7 @@ class Search extends Component {
 // 		});
 
 // 		index1.search(element.value, this.searchCallback);
-// 		index2.search(element.value, this.searchCallback);
+		//index2.search(element.value, this.searchCallback);
 
 		// perform search across multiple indexes
 		this.client.search(queries, this.searchCallback);     	
@@ -118,7 +118,7 @@ class Search extends Component {
 
 		return (
 			<div>
-				<h5><b>Projects</b></h5>
+				<h5><b>Projects description</b></h5>
 					<ul>
 						{this.state.projects.map(function(object, i){
 							{/* put unescaped highlight text: https://shripadk.github.io/react/docs/jsx-gotchas.html
@@ -137,7 +137,7 @@ class Search extends Component {
        	var that = this;
 		return (
 			<div>
-				<h5><b>Tasks</b></h5>
+				<h5><b>Tasks description</b></h5>
 					<ul>
 						{this.state.tasks.map(function(object, i){
 				             return <li key={i} dangerouslySetInnerHTML={{__html: object}}/>;				             
@@ -172,8 +172,10 @@ class Search extends Component {
 			</div>
 		{this.showProjects(this.state.projects)}
 		{this.showTasks(this.state.tasks)}
-
+{/*
 		<span className="warn"> Currently It does not show user specific results. Work in Progress.</span>
+		*/}		
+		<span> If you see ambiguous results, kindly refer <a href="https://www.algolia.com/doc/guides/textual-relevance/typo-tolerance/">Typo Tolerance.</a></span>
   	  </div>
     )
   }

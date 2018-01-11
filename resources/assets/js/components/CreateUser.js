@@ -63,12 +63,14 @@ class CreateUser extends Component {
                 </div>
               </div>
             </div><br />
+            <span>Note: default password is 123456</span>
             <div className="form-group">
 				<ButtonToolbar>
 				  <button type="button" onClick={this.handleSubmit} className="btn btn-primary">Add User</button>
 				  <button type="button" onClick={this.handleCancel} className="btn btn-warning">Cancel</button>
 				</ButtonToolbar>
             </div>
+            
         </form>
 		</div>
       )

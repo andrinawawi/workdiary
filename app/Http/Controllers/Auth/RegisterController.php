@@ -8,6 +8,7 @@ use App\Role;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Log;
 
 class RegisterController extends Controller
 {
@@ -73,8 +74,12 @@ class RegisterController extends Controller
 		// by default create admin 'user' for user registered via login interface...
 		$user->roles()->attach(Role::where('name', 'admin')->first());
 
+// 		Log::info('Created user : '.json_encode($user));
+// 		Log::info('Created user ID : '. $user->id);
+// 		Log::info('Created BY KEY : '. env('ALGOLIA_SEARCH_KEY'));
+		
 		$securedApiKey = \AlgoliaSearch\Client::generateSecuredApiKey(
-		  config('ALGOLIA_SEARCH_KEY'), // Make sure to use a search key
+		  env('ALGOLIA_SEARCH_KEY'), // Make sure to use a search key
 		  [
 			'filters' => 'owner_user_id:'.$user->id
 		  ]
